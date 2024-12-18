@@ -7,4 +7,3 @@
 3.  **Server_creation.ipynb** - подготовка и наполнение векторной базы данных (Chroma) и компоновка сервера
 4.  **serv.py** - реализация сервера
 5.  **Client/Hypertext-Neural-Editor-demo** - клиентская часть на Qt/C++ (стенд)
-6.  
