@@ -7,6 +7,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QMdiArea>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -71,27 +72,6 @@ void AIChat::SetSendButtonText(const QString buttonText)
     ui->pushButtonSend->setText(buttonText);
 }
 
-// Зпросить токен
-// void AIChat::GetToken()
-// {
-//     const QUrl authUrlAuth { _mapModelsProperties[_currentLLM]->strOAuthPath };
-//     const QString authorization { "Bearer " + Settings::GetInstance().GetGigaChatAuthorization() };
-//     const QString payload { "scope=GIGACHAT_API_PERS" };
-
-//     QNetworkRequest request(authUrlAuth);
-//     request.setRawHeader("RqUID", "6f0b1291-c7f3-43c6-bb2e-9f3efb2dc98e");
-//     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
-//     request.setRawHeader("Authorization", authorization.toLocal8Bit());
-
-//     _pNetworkInterface->post(request, payload.toLocal8Bit());
-//     qDebug() << "Token request";
-
-//     disconnect(_pNetworkInterface, SIGNAL(finished(QNetworkReply*)),
-//             this, SLOT(SlotReceptionFinished(QNetworkReply*)));
-//     connect(_pNetworkInterface, SIGNAL(finished(QNetworkReply*)),
-//             this, SLOT(SlotGetToken(QNetworkReply*)));
-// }
-
 // Задать цвет текста и сделать его жирным
 void AIChat::SetTextBoldAndColor(QColor color)
 {
@@ -141,50 +121,16 @@ void AIChat::SlotSendButtonClicked()
     }
     _verbose = true;
 
-    // auto doc = _mainWindow->GetActiveDocumentWindow();
-    // QString CurrentPageText = doc->GetContext();
-
-    // const QString token { QString("Bearer ") + _mapModelsProperties[_currentLLM]->strToken };
-
-//    const QUrl authUrlModels { _mapModelsProperties[_currentLLM]->strBasePath + "/models" };
-//    QNetworkRequest requestList(authUrlModels);
-//    requestList.setRawHeader("Authorization", token.toLocal8Bit());
-//    _pNetworkInterface->get(requestList);
-
-    // const QUrl authUrlCompletion { _mapModelsProperties[_currentLLM]->strBasePath + "/chat/completions"};
-    // QJsonObject dataForMessage
-    // {
-    //     {"model",               _mapModelsProperties[_currentLLM]->strModelName},
-    //     {"temperature",         _mapModelsProperties[_currentLLM]->temperature},
-    //     {"top_p",               0.47},
-    //     {"n",                   1},
-    //     {"max_tokens",          512},
-    //     {"repetition_penalty",  1.07},
-    //     {"stream",              false},
-    //     {"update_interval",     0},
-    // };
-    // QJsonObject systemMessage
-    // {
-    //     {"role", "system"},
-    //     {"content", "Отвечай как путеводитель по Китаю. Используй контекст"}
-    // };
     QJsonObject userMessage
     {
-//        {"role", "user"},
-//        {"content", ui->textEditPrompt->toPlainText()} // +
-            //" Используй контекст: " + CurrentPageText.simplified()}
         {"content", ui->textEditPrompt->toPlainText()}
     };
-    // QJsonArray messages;
-    // messages.append(systemMessage);
-    // messages.append(userMessage);
-    // dataForMessage["messages"] = messages;
 
     QJsonDocument jsonDocument(userMessage);    // dataForMessage);
     qDebug() << "Текст промпта: " << ui->textEditPrompt->toPlainText() /*+ " Используй контекст: "
             + CurrentPageText.simplified()*/ << "\n";    //jsonDocument.toJson(QJsonDocument::Compact);
 
-    QNetworkRequest requestCompletion(QUrl("http://192.168.0.19:9090/chat"));  //"http://172.28.168.76:9090/chat"));   //(authUrlCompletion);
+    QNetworkRequest requestCompletion(QUrl("http://192.168.0.19:9090/chat"));
     requestCompletion.setRawHeader("Content-Type", "application/json");
     //requestCompletion.setRawHeader("Authorization", token.toLocal8Bit());
 
@@ -242,70 +188,17 @@ void AIChat::SlotReceptionFinished(QNetworkReply* pReply)
     }
     else
     {
-        // ui->textEditChat->append("Путеводитель по Китаю");
-        // SetTextBoldAndColor(Qt::darkCyan);
 
         auto answer = jsonObject["content"].toString();
 
         ui->textEditChat->append(answer);
         qDebug() << answer;
 
-        // QJsonArray jsonArray = jsonObject["choices"].toArray();
-
-        // for(auto value: jsonArray)
-        // {
-        //     QJsonObject objMessage = value.toObject();
-        //     QJsonObject obj = objMessage["message"].toObject();
-        //     ui->textEditChat->append(obj["content"].toString());
-        // }
         ui->textEditChat->append("");
-
-        // ui->textEditPrompt->clear();
     }
 
     pReply->deleteLater();
 }
-
-// Слот получения токена
-// void AIChat::SlotGetToken(QNetworkReply *pReply)
-// {
-//     qDebug() << "Token reply";
-
-//     auto replyData = pReply->readAll();
-
-//     if (pReply->error() != QNetworkReply::NoError)
-//     {
-//         qDebug() << "Token reply error!";
-
-//         qDebug() << pReply->rawHeaderList();
-//         qDebug() << pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-//         qDebug() << pReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-//         qDebug() << pReply->errorString() << pReply->error();
-//         qDebug() << replyData;
-
-//         ui->textEditChat->append("Token reply error!");
-//         SetTextBoldAndColor(Qt::red);
-//         ui->textEditChat->append("");
-//     }
-//     else
-//     {
-//         QJsonDocument jsonResponse = QJsonDocument::fromJson(replyData);
-//         QJsonObject jsonObject = jsonResponse.object();
-
-//         _mapModelsProperties[_currentLLM]->strToken = jsonObject["access_token"].toString();
-//         qDebug() << "Token reply success!";
-
-//         _verbose = false;
-//         SlotSendButtonClicked();
-//     }
-
-//     pReply->deleteLater();
-
-//     disconnect(_pNetworkInterface, SIGNAL(finished(QNetworkReply*)),
-//                this, SLOT(SlotGetToken(QNetworkReply*)));
-//     connect(_pNetworkInterface, SIGNAL(finished(QNetworkReply*)),
-//             this, SLOT(SlotReceptionFinished(QNetworkReply*)));
-// }
 
 // Очистить форматирование промпта
 void AIChat::SlotClearPromptFormat()
@@ -330,7 +223,6 @@ void AIChat::SlotClearPromptFormat()
 void AIChat::SlotReadyRead()
 {
     auto replyData = _pReply->readAll();
-    // qDebug() << "SlotReadyRead";
     qDebug() << "ReplyData: " << replyData;
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(replyData);
@@ -339,8 +231,6 @@ void AIChat::SlotReadyRead()
 
     if (jsonObject.isEmpty())
         qDebug() << "jsonObject is empty!";
-    // else
-    //     qDebug() << "jsonObject: " << jsonObject;
 
     if (_pReply->error() != QNetworkReply::NoError)
     {
@@ -349,17 +239,6 @@ void AIChat::SlotReadyRead()
     }
     else
     {
-        // QJsonArray jsonArray = jsonObject["choices"].toArray();
-
-        // for(auto value: jsonArray)
-        // {
-        //     qDebug() << "value: " << value;
-        //     QJsonObject objMessage = value.toObject();
-        //     QJsonObject obj = objMessage["delta"].toObject();
-        //     ui->textEditChat->moveCursor(QTextCursor::End);
-        //     // ui->textEditChat->insertPlainText(QString(replyData));
-        //     ui->textEditChat->insertPlainText(obj["content"].toString());
-        // }
         if (jsonObject["index"].toInt())
         {
             qDebug() << "Индекс страницы: " << jsonObject["index"].toInt();
@@ -376,6 +255,7 @@ void AIChat::SlotReadyRead()
             QString newFileName = QDir(QDir::currentPath()).filePath(fileName);
             qDebug() << newFileName;
 
+            _mainWindow->GetMdi()->closeAllSubWindows();
             _mainWindow->OpenFile(newFileName);
         }
         if (jsonObject["content"].isString())
@@ -384,5 +264,4 @@ void AIChat::SlotReadyRead()
             ui->textEditChat->insertPlainText(jsonObject["content"].toString());
         }
     }
-    // qDebug() << "\n";
 }

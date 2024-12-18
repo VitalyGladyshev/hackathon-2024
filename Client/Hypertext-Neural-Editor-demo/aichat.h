@@ -9,6 +9,7 @@ class AIChat;
 
 class QNetworkAccessManager;
 class QNetworkReply;
+class QMdiArea;
 class MainWindow;
 
 /*!

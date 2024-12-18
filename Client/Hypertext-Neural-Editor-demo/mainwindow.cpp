@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent /* = nullptr */)
     connect(_pCloseAct, &QAction::triggered,
             _pMdiArea, &QMdiArea::closeActiveSubWindow);
 
-    // Создание действия закрыть всё дочерние окна
+    // Создание действия закрыть все дочерние окна
     _pCloseAllAct = new QAction(tr("Close &All"), this);
     connect(_pCloseAllAct, &QAction::triggered,
             _pMdiArea, &QMdiArea::closeAllSubWindows);
@@ -635,9 +635,15 @@ void MainWindow::SlotBackward()
 // Слот навигация Домой
 void MainWindow::SlotHome()
 {
-    DocumentWindow* pDocument = GetActiveDocumentWindow();
-    if (pDocument)
-        pDocument->home();
+    _pMdiArea->closeAllSubWindows();
+    QString startFileName = QDir(QDir::currentPath()).filePath(":/pages/index.html");
+    QFile file(startFileName);
+    if(file.exists())
+        OpenFile(startFileName);
+
+//    DocumentWindow* pDocument = GetActiveDocumentWindow();
+//    if (pDocument)
+//        pDocument->home();
 }
 
 // Слот навигация вперёд
