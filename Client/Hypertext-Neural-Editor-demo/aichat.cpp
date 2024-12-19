@@ -130,7 +130,7 @@ void AIChat::SlotSendButtonClicked()
     qDebug() << "Текст промпта: " << ui->textEditPrompt->toPlainText() /*+ " Используй контекст: "
             + CurrentPageText.simplified()*/ << "\n";    //jsonDocument.toJson(QJsonDocument::Compact);
 
-    QNetworkRequest requestCompletion(QUrl("http://192.168.0.19:9090/chat"));
+    QNetworkRequest requestCompletion(QUrl("http://51.250.19.51:9090/chat"));
     requestCompletion.setRawHeader("Content-Type", "application/json");
     //requestCompletion.setRawHeader("Authorization", token.toLocal8Bit());
 
