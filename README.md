@@ -7,3 +7,11 @@
 3.  **Server_creation.ipynb** - подготовка и наполнение векторной базы данных (Chroma) и компоновка сервера
 4.  **serv.py** - реализация сервера
 5.  **Client/Hypertext-Neural-Editor-demo** - клиентская часть на Qt/C++ (стенд)
+6.  **Client/ChinaTravelGuideSetup.zip** - дистрибутв клиента для ОС Windows
+
+## Установка
+
+Реализован дистрибутив для ОС Windows<br>
+
+Исполняемый файл дистрибутва в архиве: **Client/ChinaTravelGuideSetup.zip**
+Для установки загрузите архив и запустите из него мастер установки
